@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// trace is a type that contains an actual trace
-type trace struct {
+// Trace is a type that contains an actual trace
+type Trace struct {
 	// data stores the trace string
 	data string
 	// level stores the level of this trace
@@ -18,7 +18,7 @@ type trace struct {
 // tracer is a type providing trace capabilities to a go application
 type Tracer struct {
 	// data stores the individual string entries in the tracer
-	data []trace
+	data []Trace
 	// level determines what level a trace must be to actually be logged
 	level int
 }
@@ -52,7 +52,7 @@ func New(level int) *Tracer {
 	tracer := new(Tracer)
 
 	tracer.level = level
-	tracer.data = make([]trace, 0, 100)
+	tracer.data = make([]Trace, 0, 100)
 
 	return tracer
 
@@ -62,7 +62,7 @@ func New(level int) *Tracer {
 func (t *Tracer) Trace(level int, format string, args ...interface{}) {
 
 	if level >= t.level && level < LevelNothing {
-		trace := trace{fmt.Sprintf(format, args...), level, time.Now()}
+		trace := Trace{fmt.Sprintf(format, args...), level, time.Now()}
 		t.data = append(t.data, trace)
 	} else if level <= LevelEverything {
 		panic("tracer: level is invalid: Cannot Trace with LevelEverything or below.")
@@ -73,9 +73,9 @@ func (t *Tracer) Trace(level int, format string, args ...interface{}) {
 }
 
 // Returns a copy of the trace data
-func (t *Tracer) Data() []trace {
+func (t *Tracer) Data() []Trace {
 
-	copiedTraces := make([]trace, len(t.data))
+	copiedTraces := make([]Trace, len(t.data))
 
 	copy(copiedTraces, t.data)
 
@@ -83,10 +83,23 @@ func (t *Tracer) Data() []trace {
 
 }
 
-// Returns a copy of the trace data, filtered by trace level
-func (t *Tracer) Filter(level int) []trace {
+// Returns a copy of the trace data as an array of string
+func (t *Tracer) StringData() []string {
 
-	filteredTraces := make([]trace, 0, len(t.data))
+	stringTraces := make([]string, 0, len(t.data))
+
+	for _, trace := range t.data {
+		stringTraces = append(stringTraces, fmt.Sprintf("At %s, for %s, we got: %s", trace.timestamp.String(), LevelToString(trace.level), trace.data))
+	}
+
+	return stringTraces
+
+}
+
+// Returns a copy of the trace data, filtered by trace level
+func (t *Tracer) Filter(level int) []Trace {
+
+	filteredTraces := make([]Trace, 0, len(t.data))
 
 	for _, trace := range t.data {
 
@@ -98,4 +111,26 @@ func (t *Tracer) Filter(level int) []trace {
 
 	return filteredTraces
 
+}
+
+// Returns a string representation of the level
+func LevelToString(level int) string {
+
+	switch level {
+	case LevelEverything:
+		return "LevelEverything"
+	case LevelDebug:
+		return "LevelDebug"
+	case LevelInfo:
+		return "LevelInfo"
+	case LevelWarning:
+		return "LevelWarning"
+	case LevelError:
+		return "LevelError"
+	case LevelCritical:
+		return "LevelCritical"
+	case LevelNothing:
+		return "LevelNothing"
+	}
+	return ""
 }
