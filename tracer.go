@@ -97,8 +97,8 @@ func (t *Tracer) StringData() []string {
 
 }
 
-// LogString gets a nicely formatted string of the trace data.
-func (r *Tracer) LogString() string {
+// String gets a nicely formatted string of the trace data.
+func (r *Tracer) String() string {
 	return strings.MergeStrings("\n", strings.JoinStrings("\n", r.StringData()...))
 }
 
