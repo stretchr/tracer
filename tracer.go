@@ -2,6 +2,7 @@ package tracer
 
 import (
 	"fmt"
+	"github.com/stretchrcom/stew/strings"
 	"time"
 )
 
@@ -89,11 +90,16 @@ func (t *Tracer) StringData() []string {
 	stringTraces := make([]string, 0, len(t.data))
 
 	for _, trace := range t.data {
-		stringTraces = append(stringTraces, fmt.Sprintf("At %s, for %s, we got: %s", trace.timestamp.String(), LevelToString(trace.level), trace.data))
+		stringTraces = append(stringTraces, fmt.Sprintf("TRACE: %s\t%s\t\t%s", trace.timestamp.String(), LevelToString(trace.level), trace.data))
 	}
 
 	return stringTraces
 
+}
+
+// LogString gets a nicely formatted string of the trace data.
+func (r *Tracer) LogString() string {
+	return strings.MergeStrings("\n", strings.JoinStrings("\n", r.StringData()...))
 }
 
 // Returns a copy of the trace data, filtered by trace level
@@ -120,17 +126,17 @@ func LevelToString(level int) string {
 	case LevelEverything:
 		return "LevelEverything"
 	case LevelDebug:
-		return "LevelDebug"
+		return "     LevelDebug"
 	case LevelInfo:
-		return "LevelInfo"
+		return "      LevelInfo"
 	case LevelWarning:
-		return "LevelWarning"
+		return "   LevelWarning"
 	case LevelError:
-		return "LevelError"
+		return "     LevelError"
 	case LevelCritical:
-		return "LevelCritical"
+		return "  LevelCritical"
 	case LevelNothing:
-		return "LevelNothing"
+		return "   LevelNothing"
 	}
 	return ""
 }
