@@ -59,6 +59,10 @@ func New(level int) *Tracer {
 
 }
 
+func (t *Tracer) Level() int {
+	return t.level
+}
+
 // Trace saves a piece of trace data at the current time.
 func (t *Tracer) Trace(level int, format string, args ...interface{}) {
 
