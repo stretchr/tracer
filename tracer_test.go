@@ -24,6 +24,14 @@ func TestTracer_Level(t *testing.T) {
 	assert.Equal(t, LevelInfo, tracer.Level())
 }
 
+func TestTracer_LevelWithNil(t *testing.T) {
+
+	var tr *Tracer = nil
+
+	assert.Equal(t, LevelNothing, tr.Level())
+
+}
+
 func TestTracer_TraceLevels(t *testing.T) {
 
 	tracer := New(LevelCritical)

@@ -61,6 +61,11 @@ func New(level int) *Tracer {
 
 // Level gets the current level of this Tracer.
 func (t *Tracer) Level() int {
+
+	if t == nil {
+		return LevelNothing
+	}
+
 	return t.level
 }
 
