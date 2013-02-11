@@ -32,6 +32,22 @@ func TestTracer_LevelWithNil(t *testing.T) {
 
 }
 
+func TestTracer_Should(t *testing.T) {
+
+	var tr *Tracer = nil
+
+	assert.False(t, tr.Should(LevelError))
+	assert.False(t, tr.Should(LevelDebug))
+	assert.False(t, tr.Should(LevelInfo))
+	assert.False(t, tr.Should(LevelEverything))
+
+	tr = New(LevelDebug)
+
+	assert.True(t, tr.Should(LevelDebug))
+	assert.False(t, tr.Should(LevelEverything))
+
+}
+
 func TestTracer_TraceLevels(t *testing.T) {
 
 	tracer := New(LevelCritical)

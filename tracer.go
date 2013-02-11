@@ -69,6 +69,11 @@ func (t *Tracer) Level() int {
 	return t.level
 }
 
+// Should gets whether the tracer should trace at the specified level.
+func (t *Tracer) Should(level int) bool {
+	return t.Level() <= level
+}
+
 // Trace saves a piece of trace data at the current time.
 func (t *Tracer) Trace(level int, format string, args ...interface{}) {
 
