@@ -97,6 +97,50 @@ func TestTracer_Trace(t *testing.T) {
 
 }
 
+func TestTracer_TraceHelpers(t *testing.T) {
+
+	tracer := New(LevelDebug)
+	tracer.TraceDebug("trace")
+	tracer.TraceInfo("trace")
+	tracer.TraceWarning("trace")
+	tracer.TraceError("trace")
+	tracer.TraceCritical("trace")
+	assert.Equal(t, len(tracer.data), 5)
+
+	tracer = New(LevelInfo)
+	tracer.TraceDebug("trace")
+	tracer.TraceInfo("trace")
+	tracer.TraceWarning("trace")
+	tracer.TraceError("trace")
+	tracer.TraceCritical("trace")
+	assert.Equal(t, len(tracer.data), 4)
+
+	tracer = New(LevelWarning)
+	tracer.TraceDebug("trace")
+	tracer.TraceInfo("trace")
+	tracer.TraceWarning("trace")
+	tracer.TraceError("trace")
+	tracer.TraceCritical("trace")
+	assert.Equal(t, len(tracer.data), 3)
+
+	tracer = New(LevelError)
+	tracer.TraceDebug("trace")
+	tracer.TraceInfo("trace")
+	tracer.TraceWarning("trace")
+	tracer.TraceError("trace")
+	tracer.TraceCritical("trace")
+	assert.Equal(t, len(tracer.data), 2)
+
+	tracer = New(LevelCritical)
+	tracer.TraceDebug("trace")
+	tracer.TraceInfo("trace")
+	tracer.TraceWarning("trace")
+	tracer.TraceError("trace")
+	tracer.TraceCritical("trace")
+	assert.Equal(t, len(tracer.data), 1)
+
+}
+
 func TestTracer_TraceWithInvalidLevels(t *testing.T) {
 
 	assert.Panics(t, func() {

@@ -88,6 +88,31 @@ func (t *Tracer) Trace(level int, format string, args ...interface{}) {
 
 }
 
+// TraceDebug is a helper method for tracing at the LevelDebug level
+func (t *Tracer) TraceDebug(format string, args ...interface{}) {
+	t.Trace(LevelDebug, format, args...)
+}
+
+// TraceInfo is a helper method for tracing at the LevelInfo level
+func (t *Tracer) TraceInfo(format string, args ...interface{}) {
+	t.Trace(LevelInfo, format, args...)
+}
+
+// TraceWarning is a helper method for tracing at the LevelWarning level
+func (t *Tracer) TraceWarning(format string, args ...interface{}) {
+	t.Trace(LevelWarning, format, args...)
+}
+
+// TraceError is a helper method for tracing at the LevelError level
+func (t *Tracer) TraceError(format string, args ...interface{}) {
+	t.Trace(LevelError, format, args...)
+}
+
+// TraceCritical is a helper method for tracing at the LevelCritical level
+func (t *Tracer) TraceCritical(format string, args ...interface{}) {
+	t.Trace(LevelCritical, format, args...)
+}
+
 // Returns a copy of the trace data
 func (t *Tracer) Data() []Trace {
 
