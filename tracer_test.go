@@ -97,6 +97,21 @@ func TestTracer_Trace(t *testing.T) {
 
 }
 
+func TestTracer_NilTracer(t *testing.T) {
+
+	var tracer *Tracer = nil
+
+	assert.NotPanics(t, func() {
+		tracer.Trace(LevelDebug, "test")
+		tracer.TraceDebug("test")
+		tracer.TraceInfo("test")
+		tracer.TraceWarning("test")
+		tracer.TraceError("test")
+		tracer.TraceCritical("test")
+	})
+
+}
+
 func TestTracer_TraceHelpers(t *testing.T) {
 
 	tracer := New(LevelDebug)

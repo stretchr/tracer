@@ -77,6 +77,10 @@ func (t *Tracer) Should(level int) bool {
 // Trace saves a piece of trace data at the current time.
 func (t *Tracer) Trace(level int, format string, args ...interface{}) {
 
+	if t == nil {
+		return
+	}
+
 	if level >= t.level && level < LevelNothing {
 		trace := Trace{fmt.Sprintf(format, args...), level, time.Now()}
 		t.data = append(t.data, trace)
@@ -116,6 +120,10 @@ func (t *Tracer) TraceCritical(format string, args ...interface{}) {
 // Returns a copy of the trace data
 func (t *Tracer) Data() []Trace {
 
+	if t == nil {
+		return nil
+	}
+
 	copiedTraces := make([]Trace, len(t.data))
 
 	copy(copiedTraces, t.data)
@@ -126,6 +134,10 @@ func (t *Tracer) Data() []Trace {
 
 // Returns a copy of the trace data as an array of string
 func (t *Tracer) StringData() []string {
+
+	if t == nil {
+		return nil
+	}
 
 	stringTraces := make([]string, 0, len(t.data))
 
@@ -138,12 +150,21 @@ func (t *Tracer) StringData() []string {
 }
 
 // String gets a nicely formatted string of the trace data.
-func (r *Tracer) String() string {
-	return strings.MergeStrings("\n", strings.JoinStrings("\n", r.StringData()...))
+func (t *Tracer) String() string {
+
+	if t == nil {
+		return ""
+	}
+
+	return strings.MergeStrings("\n", strings.JoinStrings("\n", t.StringData()...))
 }
 
 // Returns a copy of the trace data, filtered by trace level
 func (t *Tracer) Filter(level int) []Trace {
+
+	if t == nil {
+		return nil
+	}
 
 	filteredTraces := make([]Trace, 0, len(t.data))
 
