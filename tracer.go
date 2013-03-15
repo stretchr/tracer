@@ -9,11 +9,11 @@ import (
 // Trace is a type that contains an actual trace
 type Trace struct {
 	// data stores the trace string
-	data string
+	Data string
 	// level stores the level of this trace
-	level int
+	Level int
 	// timestamp stores the time at which this trace occurred
-	timestamp time.Time
+	TimeStamp time.Time
 }
 
 // tracer is a type providing trace capabilities to a go application
@@ -142,7 +142,7 @@ func (t *Tracer) StringData() []string {
 	stringTraces := make([]string, 0, len(t.data))
 
 	for _, trace := range t.data {
-		stringTraces = append(stringTraces, fmt.Sprintf("TRACE: %s\t%s\t\t%s", trace.timestamp.String(), LevelToString(trace.level), trace.data))
+		stringTraces = append(stringTraces, fmt.Sprintf("TRACE: %s\t%s\t\t%s", trace.TimeStamp.String(), LevelToString(trace.Level), trace.Data))
 	}
 
 	return stringTraces
@@ -170,7 +170,7 @@ func (t *Tracer) Filter(level int) []Trace {
 
 	for _, trace := range t.data {
 
-		if trace.level == level {
+		if trace.Level == level {
 			filteredTraces = append(filteredTraces, trace)
 		}
 

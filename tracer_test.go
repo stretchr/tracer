@@ -92,8 +92,8 @@ func TestTracer_Trace(t *testing.T) {
 
 	tracer.Trace(LevelDebug, "%s", "test")
 
-	assert.Equal(t, tracer.data[0].data, "test")
-	assert.Equal(t, tracer.data[0].level, LevelDebug)
+	assert.Equal(t, tracer.data[0].Data, "test")
+	assert.Equal(t, tracer.data[0].Level, LevelDebug)
 
 }
 
@@ -200,7 +200,7 @@ func TestTracer_Copy(t *testing.T) {
 
 	temp := tracer.Data()
 
-	assert.Equal(t, temp[0].data, "test")
+	assert.Equal(t, temp[0].Data, "test")
 
 }
 
@@ -213,6 +213,6 @@ func TestTracer_Filter(t *testing.T) {
 
 	temp := tracer.Filter(LevelCritical)
 
-	assert.Equal(t, temp[0].data, "critical")
+	assert.Equal(t, temp[0].Data, "critical")
 
 }
