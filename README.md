@@ -3,7 +3,7 @@ tracer
 
 A quick and dirty tracing package for Go
 
-Check out the [API Documentation](http://godoc.org/github.com/stretchrcom/tracer).
+Check out the [API Documentation](http://godoc.org/github.com/stretchr/tracer).
 
 A proper README is coming, eventually :)
 

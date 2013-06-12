@@ -2,7 +2,7 @@ package tracer
 
 import (
 	"fmt"
-	"github.com/stretchrcom/stew/strings"
+	"github.com/stretchr/stew/strings"
 	"time"
 )
 
