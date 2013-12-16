@@ -6,6 +6,14 @@ import (
 	"time"
 )
 
+// deferredTrace holds the format string and args sent for deferred processing
+type deferredTrace struct {
+	fmt   string
+	args  []interface{}
+	level int
+	now   time.Time
+}
+
 // Trace is a type that contains an actual trace
 type Trace struct {
 	// data stores the trace string
@@ -22,6 +30,10 @@ type Tracer struct {
 	data []Trace
 	// level determines what level a trace must be to actually be logged
 	level int
+	// deferred holds whether processing is deferred or now
+	deferred bool
+	// deferredData holds the deferredTrace for the traces to be processed
+	deferredData []deferredTrace
 }
 
 const (
@@ -59,6 +71,24 @@ func New(level int) *Tracer {
 
 }
 
+// NewDeferred creates a new tracer that defers processing until Process() is called
+//
+// The level argument is used to filter the trace to the desired level of detail.
+// For example, a trace level of LevelEverything will log everything, where a trace level of LevelWarning
+// will log only warnings, errors and criticals.
+func NewDeferred(level int) *Tracer {
+
+	tracer := new(Tracer)
+
+	tracer.level = level
+	tracer.data = make([]Trace, 0, 100)
+	tracer.deferred = true
+	tracer.deferredData = make([]deferredTrace, 0, 100)
+
+	return tracer
+
+}
+
 // Level gets the current level of this Tracer.
 func (t *Tracer) Level() int {
 
@@ -82,8 +112,12 @@ func (t *Tracer) Trace(level int, format string, args ...interface{}) {
 	}
 
 	if level >= t.level && level < LevelNothing {
-		trace := Trace{fmt.Sprintf(format, args...), level, time.Now()}
-		t.data = append(t.data, trace)
+		if t.deferred {
+			t.deferredData = append(t.deferredData, deferredTrace{fmt: format, args: args, level: level, now: time.Now()})
+		} else {
+			trace := Trace{fmt.Sprintf(format, args...), level, time.Now()}
+			t.data = append(t.data, trace)
+		}
 	} else if level <= LevelEverything {
 		panic("tracer: level is invalid: Cannot Trace with LevelEverything or below.")
 	} else if level >= LevelNothing {
@@ -132,12 +166,25 @@ func (t *Tracer) Data() []Trace {
 
 }
 
+//Process processes deferred traces
+func (t *Tracer) Process() {
+	if t.deferred && len(t.deferredData) > 0 {
+		for _, defTrace := range t.deferredData {
+			trace := Trace{fmt.Sprintf(defTrace.fmt, defTrace.args...), defTrace.level, defTrace.now}
+			t.data = append(t.data, trace)
+		}
+		t.deferredData = make([]deferredTrace, 0, 100)
+	}
+}
+
 // Returns a copy of the trace data as an array of string
 func (t *Tracer) StringData() []string {
 
 	if t == nil {
 		return nil
 	}
+
+	t.Process()
 
 	stringTraces := make([]string, 0, len(t.data))
 
@@ -156,6 +203,8 @@ func (t *Tracer) String() string {
 		return ""
 	}
 
+	t.Process()
+
 	return strings.MergeStrings("\n", strings.JoinStrings("\n", t.StringData()...))
 }
 
@@ -165,6 +214,8 @@ func (t *Tracer) Filter(level int) []Trace {
 	if t == nil {
 		return nil
 	}
+
+	t.Process()
 
 	filteredTraces := make([]Trace, 0, len(t.data))
 
