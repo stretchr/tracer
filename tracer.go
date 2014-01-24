@@ -10,7 +10,7 @@ import (
 type deferredTrace struct {
 	fmt   string
 	args  []interface{}
-	level int
+	level Level
 	now   time.Time
 }
 
@@ -19,7 +19,7 @@ type Trace struct {
 	// data stores the trace string
 	Data string
 	// level stores the level of this trace
-	Level int
+	Level Level
 	// timestamp stores the time at which this trace occurred
 	TimeStamp time.Time
 }
@@ -29,17 +29,19 @@ type Tracer struct {
 	// data stores the individual string entries in the tracer
 	data []Trace
 	// level determines what level a trace must be to actually be logged
-	level int
+	level Level
 	// deferred holds whether processing is deferred or now
 	deferred bool
 	// deferredData holds the deferredTrace for the traces to be processed
 	deferredData []deferredTrace
 }
 
+type Level int
+
 const (
 	// LevelEverything defines a trace level that is guarenteed to trace everything.  This trace level
 	// should never be passed to the Trace command.
-	LevelEverything = iota
+	LevelEverything Level = iota
 	// LevelDebug defines a trace level that should be used for verbose tracing.
 	LevelDebug
 	// LevelInfo defines a trace level that should be used for normal activity tracing.
@@ -60,7 +62,7 @@ const (
 // The level argument is used to filter the trace to the desired level of detail.
 // For example, a trace level of LevelEverything will log everything, where a trace level of LevelWarning
 // will log only warnings, errors and criticals.
-func New(level int) *Tracer {
+func New(level Level) *Tracer {
 
 	tracer := new(Tracer)
 
@@ -76,7 +78,7 @@ func New(level int) *Tracer {
 // The level argument is used to filter the trace to the desired level of detail.
 // For example, a trace level of LevelEverything will log everything, where a trace level of LevelWarning
 // will log only warnings, errors and criticals.
-func NewDeferred(level int) *Tracer {
+func NewDeferred(level Level) *Tracer {
 
 	tracer := new(Tracer)
 
@@ -90,7 +92,7 @@ func NewDeferred(level int) *Tracer {
 }
 
 // Level gets the current level of this Tracer.
-func (t *Tracer) Level() int {
+func (t *Tracer) Level() Level {
 
 	if t == nil {
 		return LevelNothing
@@ -100,12 +102,12 @@ func (t *Tracer) Level() int {
 }
 
 // Should gets whether the tracer should trace at the specified level.
-func (t *Tracer) Should(level int) bool {
+func (t *Tracer) Should(level Level) bool {
 	return t.Level() <= level
 }
 
 // Trace saves a piece of trace data at the current time.
-func (t *Tracer) Trace(level int, format string, args ...interface{}) {
+func (t *Tracer) Trace(level Level, format string, args ...interface{}) {
 
 	if t == nil {
 		return
@@ -209,7 +211,7 @@ func (t *Tracer) String() string {
 }
 
 // Returns a copy of the trace data, filtered by trace level
-func (t *Tracer) Filter(level int) []Trace {
+func (t *Tracer) Filter(level Level) []Trace {
 
 	if t == nil {
 		return nil
@@ -232,7 +234,7 @@ func (t *Tracer) Filter(level int) []Trace {
 }
 
 // Returns a string representation of the level
-func LevelToString(level int) string {
+func LevelToString(level Level) string {
 
 	switch level {
 	case LevelEverything:
